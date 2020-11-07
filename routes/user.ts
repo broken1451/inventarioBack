@@ -2,6 +2,7 @@ import { Router, Request, Response } from "express";
 import { Usuario } from '../models/userModel';
 import bcrypt from "bcrypt";
 import validator from 'validator'
+import Token from '../utils/token';
 
 const userRoutes = Router();
 
@@ -119,5 +120,52 @@ userRoutes.delete("/delete/:id", async(req: any, res: Response) => {
    });
   }
 })
+
+userRoutes.post("/login", async (req: Request, res: Response) => {
+  const { email, password} = req.body
+  try {
+    
+    const userLogin = await Usuario.findOne({email: email}).exec();
+    if (userLogin) {
+      if (userLogin.compararClave(password)) {
+        const payload = {
+          _id: userLogin._id,
+          name: userLogin.name,
+          email: userLogin.email,
+          img: userLogin.img,
+        };
+        console.log({payload})
+        const token = Token.getJwtToken(userLogin);
+        return res.status(200).json({
+          ok: true,
+          userLogin,
+          token,
+        });
+      } else if (password == '' || userLogin.password == ''){
+        return res.status(400).json({
+          ok: false,
+          mensaje: 'Campo vacio',
+          // errors: {message:'Error no se encuentra email: ' + body.email +  ' asociado'}
+          errors: { message: 'El campo no puede estar vacio' },
+        });
+      } else if (password !== userLogin.password) {
+        return res.status(400).json({
+          ok: false,
+          mensaje: 'Clave incorrecta',
+          errors: { message: 'Clave incorrecta' },
+        });
+      } 
+    } else {
+       throw new Error()
+    }
+  } catch (error) {
+
+    return res.status(400).json({
+      ok: false,
+      mensaje: 'Credenciales incorrectas',
+      errors: { message: 'Error no coincide El usuario registrado en la base de datos' },
+    });
+  }
+});
 
 export default userRoutes;
