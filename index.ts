@@ -1,6 +1,21 @@
- 
+import dotenv from "dotenv";
+import Server from "./server/server";
+import {db} from './db/db'
+dotenv.config();
 
 
-console.log('hola')
+const server = new Server();
 
-    
+const conn = async () => {
+   try {
+    await db()
+    console.log("La conexion a la bd se ha realizado bien");
+    server.start(3000, () => { 
+        console.log(`Servidor corriendo exitosamente en el puerto ${process.env.PORT}`);
+    });
+   } catch (error) {
+       console.log(error)
+   }
+}
+
+conn();
