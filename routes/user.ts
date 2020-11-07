@@ -90,9 +90,34 @@ userRoutes.put("/update/:id", async (req: any, res: Response) => {
       error
    });
   }
-
- 
-
 });
+
+
+userRoutes.delete("/delete/:id", async(req: any, res: Response) => {
+  const { id } = req.params
+  try {
+    const userDeleted: any = await Usuario.findByIdAndRemove(id).exec();
+    if (userDeleted) {
+      return res.status(200).json({
+        ok: true,
+        mensaje: "Funciona",
+        userDeleted
+     });
+    } else {
+      return res.status(400).json({
+        ok: false,
+        mensaje: "El usuario con el "  + id + " ya no existe",
+        errors: { message: "No existe un usuario con ese ID" },
+     });
+    }
+  } catch (error) {
+    return res.status(400).json({
+      ok: false,
+      mensaje: "El usuario con el id "  + id + " no existe",
+      errors: { message: "No existe un usuario con ese ID" },
+      error
+   });
+  }
+})
 
 export default userRoutes;
