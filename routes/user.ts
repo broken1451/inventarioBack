@@ -16,7 +16,7 @@ const userRoutes = Router();
 userRoutes.get("/", async (req: Request, res: Response) => {
   try {
     const users = await Usuario.find({}, 'name email img _id created').limit(10).exec();
-    const usersNumbers = await Usuario.count({});
+    const usersNumbers = await Usuario.countDocuments({});
     return res.json({
       ok: true,
       mensaje: "Todo funciona bien",
@@ -57,6 +57,42 @@ userRoutes.post("/create", async (req: Request, res: Response) => {
         message: "Faltan datos por enviar",
     });
   }
+});
+
+userRoutes.put("/update/:id", async (req: any, res: Response) => {
+  const { id } = req.params
+  try {
+    const { name, email} = req.body
+    const userUpdate: any = await Usuario.findById(id).exec();
+    if (userUpdate) {
+      userUpdate.name = name || '';
+      userUpdate.email = email || '';
+      const userUpdateSave = await userUpdate.save() 
+      userUpdateSave.password = ":)";
+      return res.status(200).json({
+         ok: true,
+         mensaje: "Todo funciona bien en put",
+         userUpdateSave,
+      });
+    } else {
+      return res.status(400).json({
+        ok: true,
+        mensaje: "El usuario con el " + id + "no existe",
+        errors: { message: "No existe un usuario con ese ID" },
+     });
+    }
+  
+  } catch (error) {
+    return res.status(400).json({
+      ok: false,
+      mensaje: "El usuario con el "  + id + " no existe",
+      errors: { message: "No existe un usuario con ese ID" },
+      error
+   });
+  }
+
+ 
+
 });
 
 export default userRoutes;
