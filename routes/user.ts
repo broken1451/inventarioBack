@@ -7,6 +7,9 @@ import fileUpload from "express-fileupload";
 import express from 'express';
 import uniqid from "uniqid";
 import { subirImg } from "../utils/subirImg";
+import { verificaToken } from "../middlewares/auth";
+
+
 
 const userRoutes = Router();
 
@@ -14,7 +17,7 @@ const userRoutes = Router();
 const app = express();
 app.use(fileUpload());
 
-userRoutes.get("/", async (req: Request, res: Response) => {
+userRoutes.get("/", [verificaToken]  , async (req: any, res: Response) => {
   try {
     const users = await Usuario.find({}, 'name email img _id created').limit(10).exec();
     const usersNumbers = await Usuario.countDocuments({});
@@ -22,7 +25,8 @@ userRoutes.get("/", async (req: Request, res: Response) => {
       ok: true,
       mensaje: "Todo funciona bien",
       users,
-      usersNumbers
+      usersNumbers,
+      // user: req.usuario
     });
   } catch (error) {
     console.log(error)
