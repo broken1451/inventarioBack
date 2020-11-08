@@ -17,11 +17,13 @@ const userRoutes = Router();
 const app = express();
 app.use(fileUpload());
 
-userRoutes.get("/", [verificaToken]  , async (req: any, res: Response) => {
+userRoutes.get("/", async (req: any, res: Response) => {
   try {
-    const users = await Usuario.find({}, 'name email img _id created').limit(10).exec();
+    let desde = req.query.desde || 0;
+    desde =  Number(desde);
+    const users = await Usuario.find({}, 'name email img _id created').skip(desde).limit(10).exec();
     const usersNumbers = await Usuario.countDocuments({});
-    return res.json({
+    return res.status(200).json({
       ok: true,
       mensaje: "Todo funciona bien",
       users,

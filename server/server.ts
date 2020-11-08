@@ -3,6 +3,7 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import userRoutes from '../routes/user';
 import imgs from '../routes/imgs';
+import pcRoutes from '../routes/pc';
 
 // export const app =  express();
 
@@ -25,8 +26,9 @@ export default class Server {
     }
 
     startRoutes() {
-        this.app.use('/user', userRoutes )
-        this.app.use('/img', imgs)
+        this.app.use('/user', userRoutes);
+        this.app.use('/pc', pcRoutes)
+        this.app.use('/img', imgs);
     }
 
 }

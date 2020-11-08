@@ -1,4 +1,5 @@
 import { Usuario } from "../models/userModel";
+import { Pc } from "../models/pcModel";
 import fileSystem from "fs";
 import { Response } from "express";
 import { Imgs } from '../models/imgs';
@@ -49,9 +50,43 @@ export const subirImg = async (tipoImagen: string, id: string, nombreArchivo: st
           console.log({ error });
           return res?.json({
             ok: false,
-            mensaje: "No es un user por id",
+            mensaje: "No existe un usuario por ese id",
           });
         }
+        break;
+        case "pc":
+          try {
+            const pc = await Pc.findById(id).exec();
+            if (pc) {
+                if (!pathViejo && pc.img == '') {
+                pathViejo = "../uploads/pc/" + pc.img;
+                borrarImg(pathViejo)
+                pc.img = nombreArchivo;
+                await pc.save();
+                return res?.status(200).json({
+                  ok: true,
+                  mensaje: "Pc actualizado con exito",
+                  pc,
+                });
+              }else {
+                pathViejo = "./uploads/pc/" + pc.img;  // pathViejo de la imagen si el usuario ya tiene una guardada
+                borrarImg(pathViejo)
+                pc.img = nombreArchivo;
+                await pc.save();
+                return res?.status(200).json({
+                  ok: true,
+                  mensaje: "Pc actualizado con exito",
+                  pc,
+                });
+              }
+            }
+          } catch (error) {
+            // console.log({ error });
+            return res?.json({
+              ok: false,
+              mensaje: `No existe un pc con id ${id}`,
+            });
+          }
         break;
       default:
         console.log("default");

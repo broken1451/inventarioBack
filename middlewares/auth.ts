@@ -9,9 +9,9 @@ export const verificaToken = (req: any, res: Response, next: NextFunction) => {
     .then((decoded: any) => {
       console.log({ decoded });
       req.usuario = decoded.usuario;
-      //  let  usuario = req.usuario;
+      //  let usuario = req.usuario;
       //  usuario =  decoded.usuario
-      //  console.log({usuario});
+      //  console.log( 'aca',{usuario});
       //  console.log({req: req.usuario});
       //  const usuario =
       next();
