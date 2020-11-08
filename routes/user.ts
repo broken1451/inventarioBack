@@ -40,7 +40,7 @@ userRoutes.post("/create", async (req: Request, res: Response) => {
          password: bcrypt.hashSync(password, 10),
       };
       const userCreated = await Usuario.create(user)
-      return res.status(400).json({
+      return res.status(201).json({
         ok: true,
         message: "user guardado",
         userCreated
@@ -54,7 +54,7 @@ userRoutes.post("/create", async (req: Request, res: Response) => {
 
   } catch (error) {
     console.log(error);
-    return res.status(400).json({
+    return res.status(500).json({
         message: "Faltan datos por enviar",
     });
   }

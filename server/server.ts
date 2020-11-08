@@ -2,6 +2,7 @@ import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 import userRoutes from '../routes/user';
+import imgs from '../routes/imgs';
 
 // export const app =  express();
 
@@ -25,6 +26,7 @@ export default class Server {
 
     startRoutes() {
         this.app.use('/user', userRoutes )
+        this.app.use('/img', imgs)
     }
 
 }
