@@ -1,11 +1,12 @@
 import dotenv from "dotenv";
 import Server from "./server/server";
 import {db} from './db/db'
+import fileUpload from "express-fileupload";
 dotenv.config();
 
 
 const server = new Server();
-
+server.app.use(fileUpload({useTempFiles: true}));
 const conn = async () => {
    try {
     await db()

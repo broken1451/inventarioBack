@@ -1,7 +1,6 @@
 import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
-import fileUpload from "express-fileupload";
 import userRoutes from '../routes/user';
 
 // export const app =  express();
@@ -15,7 +14,6 @@ export default class Server {
         this.app = express();
         this.app.use(bodyParser.urlencoded({ extended: true }));
         this.app.use(bodyParser.json());
-        this.app.use(fileUpload({useTempFiles: true}));
         this.app.use(cors({ origin: true, credentials: true }));
         this.port = Number(process.env.PORT) || 3500;
     }

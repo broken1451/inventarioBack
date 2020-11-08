@@ -29,6 +29,7 @@
     "@types/jsonwebtoken": "^8.5.0",
     "@types/mongoose": "^5.7.37",
     "@types/mongoose-unique-validator": "^1.0.4",
+    "@types/uniqid": "^5.2.0",
     "@types/validator": "^13.1.0"
   }
 }
