@@ -21,16 +21,29 @@ export const subirImg = async (tipoImagen: string, id: string, nombreArchivo: st
         try {
           const user = await Usuario.findById(id).exec();
           if (user) {
-            pathViejo = "./uploads/usuario/" + user.img; // pathViejo de la imagen si el usuario ya tiene una guardada
-            borrarImg(pathViejo)
-            user.img = nombreArchivo;
-            await user.save();
-            user.password = ":)";
-            return res?.json({
-              ok: true,
-              mensaje: "No es un user por id",
-              user,
-            });
+              if (!pathViejo && user.img == '') {
+              pathViejo = "../uploads/usuario/" + user.img;
+              borrarImg(pathViejo)
+              user.img = nombreArchivo;
+              await user.save();
+              user.password = ":)";
+              return res?.status(200).json({
+                ok: true,
+                mensaje: "user actualizado con exito",
+                user,
+              });
+            }else {
+              pathViejo = "./uploads/usuario/" + user.img;  // pathViejo de la imagen si el usuario ya tiene una guardada
+              borrarImg(pathViejo)
+              user.img = nombreArchivo;
+              await user.save();
+              user.password = ":)";
+              return res?.status(200).json({
+                ok: true,
+                mensaje: "user actualizado con exito",
+                user,
+              });
+            }
           }
         } catch (error) {
           console.log({ error });
@@ -57,16 +70,14 @@ export const crearImgs = async (data: any, res?: Response  ) => {
     //   console.log({data})
     // })  
     const ImgsCreated  = await Imgs.create({imgs: data})  
-    console.log({ImgsCreated})
-    return res?.json({
-       ok: true,
-       mensaje: "Imagenes guardadas exitosamente",
-       ImgsCreated,
-    });
+      return res?.json({
+         ok: true,
+         mensaje: "Imagenes guardadas exitosamente",
+         ImgsCreated,
+      });
+
   } catch (error) {
-    console.log(error);
-    return res?.status(400).json({
-        message: "Faltan datos por enviar",
-    });
+    console.log('Error catch ====> ', error)
+    throw new Error(`error ====> ${error}`);
   }
-};
+}; 

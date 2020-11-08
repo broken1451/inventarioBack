@@ -48,16 +48,7 @@ imgs.post("/uploadImgs", async (req: Request, res: Response) => {
       } else {
         file.mv('./uploads/imgs/' + file.name)
         crearImgs(file.name, res); 
-        // return res.send({
-        //     status: true,
-        //     message: 'File are Upload',
-        //     name: file.name,
-        //     mimetype: file.mimetype,
-        //     size: file.size
-        // })
       }
-
-
 
     } else {
       try {
@@ -68,10 +59,12 @@ imgs.post("/uploadImgs", async (req: Request, res: Response) => {
           const extensionArchivo = nombreArchivoSeparado[nombreArchivoSeparado.length - 1];
           const extensionesValida = ['png', 'jpg', 'gif', 'jpeg'];
           if (!extensionesValida.includes(extensionArchivo)) {
-            throw new Error('error')
+            console.log('if extension no valida')
+            return new Error('error');
           } else {
+            console.log('else extension no valida primero aca ');
             file.mv('./uploads/imgs/' + file.name);
-            data.push({
+            data.push({ 
               name: file.name,
               mimetype: file.mimetype,
               size: file.size 
@@ -81,6 +74,7 @@ imgs.post("/uploadImgs", async (req: Request, res: Response) => {
         crearImgs(data, res);         
       } catch (error) {
         const extensionesValida = ['png', 'jpg', 'gif', 'jpeg'];
+        // console.log('Error catch ====> ', error)
         return res.status(400).json({
           ok: false,
           mensaje: 'Solo se subiran Imagenes con extensiones validas',
@@ -91,16 +85,22 @@ imgs.post("/uploadImgs", async (req: Request, res: Response) => {
           }, 
         });
       }
+
+      return new Error('error');
     }
 
   } catch (error) {
-    console.log(error);
+    const extensionesValida = ['png', 'jpg', 'gif', 'jpeg'];
     return res.status(400).json({
-        message: "Faltan datos por enviar",
+      ok: false,
+      mensaje: 'Solo se subiran Imagenes con extensiones validas',
+      errors: {
+        message:
+          'Un archivo que agrego tiene una extesion no valida solo se admiten estas extensiones: ' +
+          extensionesValida.join(','),
+      }, 
     });
   }
 });
-
-
 
 export default imgs;
