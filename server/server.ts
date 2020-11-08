@@ -4,6 +4,8 @@ import cors from "cors";
 import userRoutes from '../routes/user';
 import imgs from '../routes/imgs';
 import pcRoutes from '../routes/pc';
+import morgan from 'morgan';
+
 
 // export const app =  express();
 
@@ -17,6 +19,7 @@ export default class Server {
         this.app.use(bodyParser.urlencoded({ extended: true }));
         this.app.use(bodyParser.json());
         this.app.use(cors({ origin: true, credentials: true }));
+        this.app.use(morgan('dev'));
         this.port = Number(process.env.PORT) || 3500;
     }
         
