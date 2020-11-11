@@ -6,8 +6,8 @@ import fileUpload from "express-fileupload";
 import express from "express";
 import uniqid from "uniqid";
 import { verificaToken } from "../middlewares/auth";
-import { subirImg } from '../utils/subirImg';
-import { Memorias } from '../models/memoriaModel';
+import { subirImg } from "../utils/subirImg";
+import { Memorias } from "../models/memoriaModel";
 
 const memoriaRoutes = Router();
 
@@ -60,44 +60,48 @@ memoriaRoutes.get("/:id", async (req: any, res: Response) => {
   }
 });
 
-memoriaRoutes.post("/create", verificaToken ,async (req: any, res: Response) => {
-  const { name, type } = req.body;
-  try {
-    if (!validator.isEmpty(name)) {
-      const memory = {
-        name,
-        type,
-        usuario: req.usuario,
-      };
-      const memorys = await Memorias.create(memory);
-      return res.status(201).json({
-        ok: true,
-        mensaje: "Todo funciona bien",
-        memorys
-      });
-    } else {
-      return res.status(400).json({
-        ok: false,
-        message: "Los datos no son validos",
+memoriaRoutes.post(
+  "/create",
+  verificaToken,
+  async (req: any, res: Response) => {
+    const { name, type } = req.body;
+    try {
+      if (!validator.isEmpty(name)) {
+        const memory = {
+          name,
+          type,
+          usuario: req.usuario,
+        };
+        const memorys = await Memorias.create(memory);
+        return res.status(201).json({
+          ok: true,
+          mensaje: "Todo funciona bien",
+          memorys,
+        });
+      } else {
+        return res.status(400).json({
+          ok: false,
+          message: "Los datos no son validos",
+          error: {
+            errors: {
+              message: "Se debe ingresar al menos el nombre de la memoria.",
+            },
+          },
+        });
+      }
+    } catch (error) {
+      return res.status(500).json({
+        message: "Faltan datos por enviar",
         error: {
           errors: {
-            message: "Se debe ingresar al menos el nombre de la memoria.",
+            message: "Se debe ingresar al menos el nombre  de la memoria.",
+            error,
           },
         },
       });
     }
-  } catch (error) {
-    return res.status(500).json({
-      message: "Faltan datos por enviar",
-      error: {
-        errors: {
-          message: "Se debe ingresar al menos el nombre  de la memoria.",
-          error,
-        },
-      },
-    });
   }
-});
+);
 
 memoriaRoutes.put("/update/:id", async (req: any, res: Response) => {
   const { id } = req.params;
@@ -169,78 +173,75 @@ memoriaRoutes.delete("/delete/:id", async (req: any, res: Response) => {
   }
 });
 
-
-
-memoriaRoutes.put("/upload/:tipoImagen/:id", async (req: any, res: Response) => {
-    const { id, tipoImagen} = req.params
+memoriaRoutes.put(
+  "/upload/:tipoImagen/:id",
+  async (req: any, res: Response) => {
+    const { id, tipoImagen } = req.params;
     const files = req.files;
     try {
-  
       // Tipos de coleccion
-      const tipoImagenesValidos = ['pc'];
+      const tipoImagenesValidos = ["pc"];
       if (tipoImagenesValidos.indexOf(tipoImagen) < 0) {
-          return res.status(400).json({
-              ok: false,
-              mensaje: "Tipo de coleccion de imagen no valida",
-              errors: {message: "Tipo de coleccion de imagen no valida"}
-          });
+        return res.status(400).json({
+          ok: false,
+          mensaje: "Tipo de coleccion de imagen no valida",
+          errors: { message: "Tipo de coleccion de imagen no valida" },
+        });
       }
-  
+
       if (!req.files || Object.keys(req.files).length === 0) {
         return res.status(400).json({
           ok: false,
           mensaje: "No selecciono ningun archivo",
-          errors: { message: 'Debe seleccionar una imagen' }
+          errors: { message: "Debe seleccionar una imagen" },
         });
       }
-  
+
       const nombreArchivo = req.files.image; //imagen es el nombre que esta en el postman
-      const nombreArchivoSeparado = nombreArchivo.name.split('.'); // separar en un arreglo el archivo para tener su extension
-      const extensionArchivo = nombreArchivoSeparado[nombreArchivoSeparado.length - 1]; // obtener la extension del archivo
-    
-      const extensionesValida = ['png', 'jpg', 'gif', 'jpeg'];
+      const nombreArchivoSeparado = nombreArchivo.name.split("."); // separar en un arreglo el archivo para tener su extension
+      const extensionArchivo =
+        nombreArchivoSeparado[nombreArchivoSeparado.length - 1]; // obtener la extension del archivo
+
+      const extensionesValida = ["png", "jpg", "gif", "jpeg"];
       if (!extensionesValida.includes(extensionArchivo)) {
         // Si manda un -1 o cualquier otro valor menor a cero manda error
         return res.status(400).json({
           ok: false,
-          mensaje: 'Extension no valida',
+          mensaje: "Extension no valida",
           errors: {
             message:
-              'La extesion agregada no es permitida solo se admiten estas extensiones: ' +
-              extensionesValida.join(','),
+              "La extesion agregada no es permitida solo se admiten estas extensiones: " +
+              extensionesValida.join(","),
           },
         });
       }
-  
+
       const idUnico = uniqid();
       const nombreImagenPersonalizado = `${idUnico}.${extensionArchivo}`;
       const path = `./uploads/${tipoImagen}/${nombreImagenPersonalizado}`;
-  
+
       nombreArchivo.mv(path, (err: any) => {
         if (err) {
           return res.status(500).json({
-              ok: false,
-              mensaje: "Error al mover archivo",
-              errors: err
+            ok: false,
+            mensaje: "Error al mover archivo",
+            errors: err,
           });
         }
-        subirImg(tipoImagen, id, nombreImagenPersonalizado, res)
+        subirImg(tipoImagen, id, nombreImagenPersonalizado, res);
         // return res.status(200).json({
         //   ok: true,
         //   mensaje: "Archivo movido",
         //   nombreImagenPersonalizado: nombreImagenPersonalizado
         // });
       });
-  
-   
     } catch (error) {
       return res.status(400).json({
         ok: false,
-        error
-     });
+        error,
+      });
     }
-});
-  
-
+  }
+);
 
 export default memoriaRoutes;
