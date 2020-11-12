@@ -6,6 +6,7 @@ import imgs from "../routes/imgs";
 import pcRoutes from "../routes/pc";
 import morgan from "morgan";
 import memoriaRoutes from "../routes/memorias";
+import otrosRoutes from "../routes/otros";
 
 // export const app =  express();
 
@@ -31,6 +32,7 @@ export default class Server {
     this.app.use("/user", userRoutes);
     this.app.use("/pc", pcRoutes);
     this.app.use("/memoria", memoriaRoutes);
+    this.app.use("/otros", otrosRoutes);
     this.app.use("/img", imgs);
   }
 }

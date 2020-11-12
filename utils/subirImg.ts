@@ -1,13 +1,10 @@
 import { Usuario } from "../models/userModel";
 import { Pc } from "../models/pcModel";
 import { Memorias } from "../models/memoriaModel";
+import { Otros } from "../models/otrosModel";
 import fileSystem from "fs";
 import { Response } from "express";
 import { Imgs } from '../models/imgs';
-import { isValidObjectId } from "mongoose";
-
-
-
 
 const borrarImg = (path: any) => {
     if (fileSystem.existsSync(path)) {
@@ -121,6 +118,41 @@ export const subirImg = async (tipoImagen: string, id: string, nombreArchivo: st
             return res?.json({
               ok: false,
               mensaje: `No existe un memoria con id ${id}`,
+            });
+          }
+        break
+
+        case "otros":
+          try {
+            const otros = await Otros.findById(id).exec();
+            if (otros) {
+                if (!pathViejo && otros.img == '') {
+                pathViejo = "../uploads/otros/" + otros.img;
+                borrarImg(pathViejo)
+                otros.img = nombreArchivo;
+                await otros.save();
+                return res?.status(200).json({
+                  ok: true,
+                  mensaje: "El producto actualizado con exito",
+                  otros,
+                });
+              }else {
+                pathViejo = "./uploads/otros/" + otros.img;  // pathViejo de la imagen si el usuario ya tiene una guardada
+                borrarImg(pathViejo)
+                otros.img = nombreArchivo;
+                await otros.save();
+                return res?.status(200).json({
+                  ok: true,
+                  mensaje: "El producto actualizado con exito",
+                  otros,
+                });
+              }
+            }
+          } catch (error) {
+            // console.log({ error });
+            return res?.json({
+              ok: false,
+              mensaje: `No existe El producto con el id  ${id}`,
             });
           }
         break
