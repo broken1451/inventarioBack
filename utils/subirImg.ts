@@ -1,9 +1,11 @@
 import { Usuario } from "../models/userModel";
 import { Pc } from "../models/pcModel";
+import { Memorias } from "../models/memoriaModel";
 import fileSystem from "fs";
 import { Response } from "express";
 import { Imgs } from '../models/imgs';
 import { isValidObjectId } from "mongoose";
+
 
 
 
@@ -88,6 +90,41 @@ export const subirImg = async (tipoImagen: string, id: string, nombreArchivo: st
             });
           }
         break;
+        case "memoria":
+          try {
+            const memoria = await Memorias.findById(id).exec();
+            if (memoria) {
+                if (!pathViejo && memoria.img == '') {
+                pathViejo = "../uploads/memoria/" + memoria.img;
+                borrarImg(pathViejo)
+                memoria.img = nombreArchivo;
+                await memoria.save();
+                return res?.status(200).json({
+                  ok: true,
+                  mensaje: "Memoria actualizado con exito",
+                  memoria,
+                });
+              }else {
+                pathViejo = "./uploads/memoria/" + memoria.img;  // pathViejo de la imagen si el usuario ya tiene una guardada
+                borrarImg(pathViejo)
+                memoria.img = nombreArchivo;
+                await memoria.save();
+                return res?.status(200).json({
+                  ok: true,
+                  mensaje: "Memoria actualizado con exito",
+                  memoria,
+                });
+              }
+            }
+          } catch (error) {
+            // console.log({ error });
+            return res?.json({
+              ok: false,
+              mensaje: `No existe un memoria con id ${id}`,
+            });
+          }
+        break
+
       default:
         console.log("default");
         break;

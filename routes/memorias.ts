@@ -60,10 +60,7 @@ memoriaRoutes.get("/:id", async (req: any, res: Response) => {
   }
 });
 
-memoriaRoutes.post(
-  "/create",
-  verificaToken,
-  async (req: any, res: Response) => {
+memoriaRoutes.post("/create",verificaToken, async (req: any, res: Response) => {
     const { name, type } = req.body;
     try {
       if (!validator.isEmpty(name)) {
@@ -173,14 +170,12 @@ memoriaRoutes.delete("/delete/:id", async (req: any, res: Response) => {
   }
 });
 
-memoriaRoutes.put(
-  "/upload/:tipoImagen/:id",
-  async (req: any, res: Response) => {
+memoriaRoutes.put("/upload/:tipoImagen/:id", async (req: any, res: Response) => {
     const { id, tipoImagen } = req.params;
     const files = req.files;
     try {
       // Tipos de coleccion
-      const tipoImagenesValidos = ["pc"];
+      const tipoImagenesValidos = ["memoria"];
       if (tipoImagenesValidos.indexOf(tipoImagen) < 0) {
         return res.status(400).json({
           ok: false,
