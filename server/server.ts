@@ -23,7 +23,7 @@ export default class Server {
     this.port = Number(process.env.PORT) || 3500;
   }
 
-  start(port: number, callback: any) {
+  async start(port: number, callback?: any) {
     this.app.listen(port, callback);
     this.startRoutes();
   }

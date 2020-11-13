@@ -11,9 +11,7 @@ const conn = async () => {
    try {
     await db()
     console.log("La conexion a la bd se ha realizado bien");
-    server.start(3000, () => { 
-        console.log(`Servidor corriendo exitosamente en el puerto ${process.env.PORT}`);
-    });
+    await server.start(3000);
    } catch (error) {
        console.log(error)
    }
