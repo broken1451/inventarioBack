@@ -105,27 +105,21 @@ imgs.post("/uploadImgs", async (req: Request, res: Response) => {
 imgs.get("/:tipoImagen/:imagen", (req, res, next) => {
   const { tipoImagen, imagen } = req.params;
   try {
-    console.log("tipoImagen: ", tipoImagen);
-    console.log("imagen: ", imagen);
+    // console.log("tipoImagen: ", tipoImagen);
+    // console.log("imagen: ", imagen); 
 
     // Creacion del path  __dirname(toda la ruta donde se encuentra en este momento), `referencia a donde se encuentra la imagen`
-    var pathImagen = path.resolve(__dirname,`../uploads/${tipoImagen}/${imagen}`); // Resolver el path para que siempre quede correcto, tipoImagen = usuarios / estudiantes, imagen = nombre de imagen
-    console.log('pathImagen: ', pathImagen, __dirname);
+    var pathImagen = path.resolve(__dirname, `../../uploads/${tipoImagen}/${imagen}`); // Resolver el path para que siempre quede correcto, tipoImagen = usuarios / estudiantes, imagen = nombre de imagen
+    console.log('__dirname: ', __dirname); 
     if (fileSystem.existsSync(pathImagen)) {
-      res.sendFile(pathImagen);
+      return res.sendFile(pathImagen);
     } else {
       const pathNoImage = path.resolve(__dirname, `../../assets/no-img.jpg`);
-      console.log("pathNoImage: ", pathNoImage);
+      // console.log("pathNoImage: ", pathNoImage);
       return res.sendFile(pathNoImage);
     }
 
-    return res.send({
-      status: true,
-      tipoImagen,
-      imagen,
-      
-    });
-  } catch (error) {}
+  } catch (error) {} 
 });
 
 export default imgs;
