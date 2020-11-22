@@ -61,12 +61,13 @@ memoriaRoutes.get("/:id", async (req: any, res: Response) => {
 });
 
 memoriaRoutes.post("/create",verificaToken, async (req: any, res: Response) => {
-    const { name, type } = req.body;
+    const { name, type, description } = req.body;
     try {
       if (!validator.isEmpty(name)) {
         const memory = {
           name,
           type,
+          description,
           usuario: req.usuario,
         };
         const memorys = await Memorias.create(memory);
@@ -103,12 +104,13 @@ memoriaRoutes.post("/create",verificaToken, async (req: any, res: Response) => {
 memoriaRoutes.put("/update/:id", async (req: any, res: Response) => {
   const { id } = req.params;
   try {
-    const { name, type } = req.body;
+    const { name, type , description } = req.body;
     const memoryUpdate: any = await Memorias.findById(id).exec();
     if (memoryUpdate) {
       if (!validator.isEmpty(name)) {
         memoryUpdate.name = name || "";
         memoryUpdate.type = type || "";
+        memoryUpdate.description = description || "";
         const memoryUpdateSave = await memoryUpdate.save();
         return res.status(200).json({
           ok: true,

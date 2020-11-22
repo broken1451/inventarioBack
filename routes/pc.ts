@@ -14,16 +14,17 @@ const pcRoutes = Router();
 const app = express();
 app.use(fileUpload());
 
-pcRoutes.get("/", async (req: any, res: Response) => {
+pcRoutes.get("/", verificaToken ,async (req: any, res: Response) => {
   try {
     let desde = req.query.desde || 0;
     desde = Number(desde);
     const pcs = await Pc.find({})
-      .skip(desde)
-      .limit(10)
-      //   .populate("usuario", "-_id sin id name email")
       .populate("usuario", "name email")
-      .exec();
+      .skip(desde)
+      .limit(15)
+      .sort({ _id: "desc" })
+      .exec()
+      //   .populate("usuario", "-_id sin id name email")
     const pcNumbers = await Pc.countDocuments({});
     return res.json({
       ok: true,
@@ -41,10 +42,10 @@ pcRoutes.get("/", async (req: any, res: Response) => {
   }
 });
 
-pcRoutes.get("/:id", async (req: any, res: Response) => {
+pcRoutes.get("/:id",verificaToken ,async (req: any, res: Response) => {
   const { id } = req.params;
   try {
-    const pc = await Pc.findById(id).exec();
+    const pc = await Pc.findById(id).populate("usuario", "name email").exec();
     return res.status(200).json({
       ok: true,
       mensaje: "Todo funciona bien",
@@ -60,19 +61,21 @@ pcRoutes.get("/:id", async (req: any, res: Response) => {
 });
 
 pcRoutes.post("/create", verificaToken, async (req: any, res: Response) => {
-  const { name, type } = req.body;
+  const { name, type, description } = req.body;
   try {
     if (!validator.isEmpty(name)) {
       const pc = {
         name,
         type,
-        usuario: req.usuario,
+        description,
+        usuario: req.usuario
       };
       const pcs = await Pc.create(pc);
       return res.status(201).json({
         ok: true,
         mensaje: "Todo funciona bien",
         pcs,
+        // pc
       });
     } else {
       return res.status(400).json({

@@ -61,11 +61,12 @@ otrosRoutes.get("/:id", async (req: any, res: Response) => {
 });
 
 otrosRoutes.post("/create", verificaToken, async (req: any, res: Response) => {
-  const { name } = req.body;
+  const { name, description } = req.body;
   try {
     if (!validator.isEmpty(name)) {
       const others = {
         name,
+        description,
         usuario: req.usuario,
       };
       const otros = await Otros.create(others);
@@ -101,11 +102,12 @@ otrosRoutes.post("/create", verificaToken, async (req: any, res: Response) => {
 otrosRoutes.put("/update/:id", async (req: any, res: Response) => {
   const { id } = req.params;
   try {
-    const { name } = req.body;
+    const { name, description } = req.body;
     const otrosUpdate: any = await Otros.findById(id).exec();
     if (otrosUpdate) {
       if (!validator.isEmpty(name)) {
         otrosUpdate.name = name || "";
+        otrosUpdate.description = description || "";
         const otrosUpdateSave = await otrosUpdate.save();
         return res.status(200).json({
           ok: true,

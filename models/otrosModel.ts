@@ -3,6 +3,7 @@ import { Schema } from "mongoose";
 
 export const otrosSchema = new mongoose.Schema({
   name: { type: String, required: [true, "El nombre es necesario y unico"] },
+  description: { type: String, required: [false, ''] },
   img: { type: String, default: "" },
   usuario: {
     type: Schema.Types.ObjectId,

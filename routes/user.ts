@@ -17,11 +17,11 @@ const userRoutes = Router();
 const app = express();
 app.use(fileUpload());
 
-userRoutes.get("/", async (req: any, res: Response) => {
+userRoutes.get("/", verificaToken ,async (req: any, res: Response) => {
   try {
     let desde = req.query.desde || 0;
     desde =  Number(desde);
-    const users = await Usuario.find({}, 'name email img _id created').skip(desde).limit(10).exec();
+    const users = await Usuario.find({}, 'name email img _id created').skip(desde).limit(5).exec();
     const usersNumbers = await Usuario.countDocuments({});
     return res.status(200).json({
       ok: true,
@@ -35,7 +35,7 @@ userRoutes.get("/", async (req: any, res: Response) => {
   }
 });
 
-userRoutes.post("/create", async (req: Request, res: Response) => {
+userRoutes.post("/create",verificaToken ,async (req: Request, res: Response) => {
   try {
     
     const { name, email, password} = req.body
@@ -66,7 +66,7 @@ userRoutes.post("/create", async (req: Request, res: Response) => {
   }
 });
 
-userRoutes.put("/update/:id", async (req: any, res: Response) => {
+userRoutes.put("/update/:id",verificaToken ,async (req: any, res: Response) => {
   const { id } = req.params
   try {
     const { name, email} = req.body
@@ -100,7 +100,7 @@ userRoutes.put("/update/:id", async (req: any, res: Response) => {
 });
 
 
-userRoutes.delete("/delete/:id", async(req: any, res: Response) => {
+userRoutes.delete("/delete/:id", verificaToken ,async(req: any, res: Response) => {
   const { id } = req.params
   try {
     const userDeleted: any = await Usuario.findByIdAndRemove(id).exec();
@@ -127,7 +127,7 @@ userRoutes.delete("/delete/:id", async(req: any, res: Response) => {
   }
 })
 
-userRoutes.put("/upload/:tipoImagen/:id", async (req: any, res: Response) => {
+userRoutes.put("/upload/:tipoImagen/:id",verificaToken ,async (req: any, res: Response) => {
   const { id, tipoImagen} = req.params
   const files = req.files;
   try {

@@ -109,13 +109,11 @@ imgs.get("/:tipoImagen/:imagen", (req, res, next) => {
     // console.log("imagen: ", imagen); 
 
     // Creacion del path  __dirname(toda la ruta donde se encuentra en este momento), `referencia a donde se encuentra la imagen`
-    var pathImagen = path.resolve(__dirname, `../../uploads/${tipoImagen}/${imagen}`); // Resolver el path para que siempre quede correcto, tipoImagen = usuarios / estudiantes, imagen = nombre de imagen
-    console.log('__dirname: ', __dirname); 
+    const pathImagen = path.resolve(__dirname, `../../uploads/${tipoImagen}/${imagen}`); // Resolver el path para que siempre quede correcto, tipoImagen = usuarios / estudiantes, imagen = nombre de imagen
     if (fileSystem.existsSync(pathImagen)) {
       return res.sendFile(pathImagen);
     } else {
       const pathNoImage = path.resolve(__dirname, `../../assets/no-img.jpg`);
-      // console.log("pathNoImage: ", pathNoImage);
       return res.sendFile(pathNoImage);
     }
 

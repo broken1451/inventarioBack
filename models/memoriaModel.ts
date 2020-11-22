@@ -5,6 +5,7 @@ export const memoriaSchema = new mongoose.Schema({
   name: { type: String, required: [true, "El nombre es necesario y unico"] },
   img: { type: String, default: "" },
   type: { type: String, default: "" },
+  description: { type: String, required: [false, ''] },
   usuario: {
     type: Schema.Types.ObjectId,
     ref: "users",
@@ -20,6 +21,7 @@ interface Memoria extends mongoose.Document {
   name: string;
   img?: string;
   type: string;
+  description: string;
   usuario?: string;
 }
 
